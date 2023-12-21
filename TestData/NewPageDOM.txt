@@ -1,0 +1,9 @@
+Below is the URL of the application and I want to navigate to Add Employee page
+https://opensource-demo.orangehrmlive.com/web/index.php/pim/addEmployee
+Login details for the application are:
+Username : Admin
+Password : admin123
+Could you please create a page object model (selenium java).
+Page is :PIM Please use PageFactory for locators Create a constructor to initialization
+Create Methods for all fields in the page class and give the proper names
+Create a generic method also which can take some inputs as parameter When we click on Save Check the text on successful save   Give me complete code as an Selenium automation Expert Thanks
