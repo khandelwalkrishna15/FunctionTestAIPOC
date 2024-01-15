@@ -11,7 +11,15 @@ import configparser
 config =configparser.RawConfigParser()
 print(config.sections())
 #_____________Reading config property files________________________
-configFilePath = r'C:\Users\tdhivya\IdeaProjects\untitled\venv\TestData\config.properties'
+
+#main_directory = os.path.join(os.getcwd(), 'FunctionalTestPOC')
+
+# Creating the path to the properties file
+#configFilePath = os.path.join(main_directory, 'TestData', 'config.properties')
+
+# Now, you can use the 'properties_file_path' in your Python program to access the file
+#print(f"Path to Prompt.properties: {configFilePath}")
+configFilePath = r'C:\Users\krishnakhandelwal\FunctionalTestPOC\TestData\config.properties'
 # configFilePath = ../venv/TestData
 #
 # configFilePath = 'venv/TestData/config.properties'
@@ -19,9 +27,10 @@ configFilePath = r'C:\Users\tdhivya\IdeaProjects\untitled\venv\TestData\config.p
 
 config.read(configFilePath)
 featurefile_folder_path = config.get('details','featurefile_folder_path')
-stepdef_folder_path = config.get('details','stepdef_folder_path')
+stepdef_folder_path = config.get('details','stepdef_folder_path_new')
 Requirement_File_path = config.get('details','Requirement_File_path')
-Generate_OnlyStepDefFile = config.get('details','Generate_OnlyStepDefFile')
+Generate_FeatureFile = config.get('details','Generate_FeatureFile')
+Generate_StepDefFile = config.get('details', 'Generate_FeatureFile')
 PathOfFeatureFile_generateStepdef = config.get('details','PathOfFeatureFile_generateStepdef')
 nameOf_featureFile = config.get('details','nameOf_featureFile')
 nameOf_StepDefFile = config.get('details','nameOf_StepDefFile')
@@ -29,8 +38,12 @@ Generate_PageObject = config.get('details','Generate_PageObject')
 pathOfPageObject = config.get('details','pathOfPageObject')
 nameOf_PageObjectFile = config.get('details','nameOf_PageObjectFile')
 PathOftheUrl_DOM = config.get('details','PathOftheUrl_DOM')
+prompt_applicationURL = config.get('details','Application_URL')
+prompt_applicationUserName = config.get('details','Username')
+prompt_applicationPassword = config.get('details','Password')
+
 #_____________Reading Prompt property files________________________
-PromptFilePath = r'C:\Users\tdhivya\IdeaProjects\untitled\venv\TestData\Prompt.properties'
+PromptFilePath = r'C:\Users\krishnakhandelwal\FunctionalTestPOC\TestData\Prompt.properties'
 config.read(PromptFilePath)
 api_key=config.get('prompts','Openapi_key')
 prompt_feature1 = config.get('prompts','prompt_feature1')
@@ -82,36 +95,37 @@ def get_prompt_from_requirementFileForPOM():
         print(f"An error occurred: {e}")
     return  file_content
 def extract_APIResponse_ForFeatureFile():
-        prompt = get_prompt_from_requirementFile()
-        newPrompt=prompt_feature1 +prompt + prompt_feature2
+    prompt = get_prompt_from_requirementFile()
+    newPrompt=prompt_feature1 + os.linesep+prompt_applicationURL+ os.linesep+'UserName: '+prompt_applicationUserName+os.linesep+'Password: '+prompt_applicationPassword+ os.linesep+prompt + os.linesep+prompt_feature2
+    print(newPrompt)
+    # Define the data (conversation and prompt)
+    data = {
+        "model":"gpt-3.5-turbo",
+        "temperature": 0.2,
+        "messages": [
+            {"role": "system",
+             "content": newPrompt
+             }
+        ]
+    }
 
-# Define the data (conversation and prompt)
-        data = {
-            "model":"gpt-3.5-turbo",
-            "temperature": 0.2,
-            "messages": [
-             {"role": "system",
-              "content": newPrompt
-              }
-                ]
-                }
+    # Make a POST request to the API
+    response = requests.post(endpoint_url, headers=headers, json=data)
 
-# Make a POST request to the API
-        response = requests.post(endpoint_url, headers=headers, json=data)
+    # Get the response content (the assistant's reply)
+    # Extract the assistant's reply
+    global prompt1_res_feature
+    prompt1_res_feature = response.json()['choices'][0]['message']['content']
+    # Use the assistant's reply
 
-
-# Get the response content (the assistant's reply)
-# Extract the assistant's reply
-        global prompt1_res_feature
-        prompt1_res_feature = response.json()['choices'][0]['message']['content']
-# Use the assistant's reply
-        print(prompt1_res_feature)
-        return prompt1_res_feature
+    print(prompt1_res_feature)
+    return prompt1_res_feature
 
 def extract_APIResponse_ForthePromptPOM():
     # prompt = "Generate step implementation for the above feature file in java language Without any additional introductory text."
     # Define the data (conversation and prompt)
-    promptNew = promptForPOMGeneration +get_prompt_from_requirementFileForPOM()
+    promptNew = promptForPOMGeneration +os.linesep+prompt_applicationURL+os.linesep+'UserName: '+prompt_applicationUserName+'Password: '+os.linesep+prompt_applicationPassword+os.linesep+get_prompt_from_requirementFileForPOM()
+    print(promptNew)
     data = {
         "model":"gpt-3.5-turbo",
         "temperature": 0.2,
@@ -130,7 +144,7 @@ def extract_APIResponse_ForthePromptPOM():
     # Extract the assistant's reply
     assistant_reply= response.json()['choices'][0]['message']['content']
     # Use the assistant's reply
-    print(assistant_reply)
+    print("Constructed prompt" +assistant_reply)
     return assistant_reply
 def extract_APIResponse_ForthePrompt():
     # prompt = "Generate step implementation for the above feature file in java language Without any additional introductory text."
@@ -142,7 +156,7 @@ def extract_APIResponse_ForthePrompt():
         "messages": [
             {"role": "system", "content": PromptSecond}
         ]}
-        # Make a POST request to the API
+    # Make a POST request to the API
     response = requests.post(endpoint_url, headers=headers, json=data)
 
     # Get the response content (the assistant's reply)
@@ -161,9 +175,9 @@ def generate_OnlyStepDefFileForGiven_featurefile():
     data = {
         "model":"gpt-3.5-turbo",
         "temperature": 0.2,
-            "messages": [
-                {"role": "system", "content": PromptSecond}
-            ]}
+        "messages": [
+            {"role": "system", "content": PromptSecond}
+        ]}
     # Make a POST request to the API
     response = requests.post(endpoint_url, headers=headers, json=data)
 
@@ -228,12 +242,17 @@ def generate_featurefile_from_api_response(api_response, class_name):
         java_file.write(api_response)
     time.sleep(10)
 
-if (Generate_OnlyStepDefFile.lower()=='no'):
+if (Generate_FeatureFile.lower()=='yes' and Generate_StepDefFile.lower() == 'no' ):
     generate_featurefile_from_api_response(extract_APIResponse_ForFeatureFile(),nameOf_featureFile)
-    generate_stepImplementationFile_For_FeatureFile(extract_APIResponse_ForthePrompt(),nameOf_StepDefFile)
-    print("generated both feature file and step def file")
-else:
+    print("generated only feature file")
+elif(Generate_FeatureFile.lower()=='no' and Generate_StepDefFile.lower()=='yes'):
     generate_stepImplementationFile_For_FeatureFile(generate_OnlyStepDefFileForGiven_featurefile(),nameOf_StepDefFile)
     print("generated only  step def file")
+else:
+    generate_featurefile_from_api_response(extract_APIResponse_ForFeatureFile(),nameOf_featureFile)
+    generate_stepImplementationFile_For_FeatureFile(generate_OnlyStepDefFileForGiven_featurefile(),nameOf_StepDefFile)
+    print("generated only  step def file")
+
+
 if (Generate_PageObject.lower()=='yes'):
     generate_javafile_For_PageObject(extract_APIResponse_ForthePromptPOM(),nameOf_PageObjectFile)

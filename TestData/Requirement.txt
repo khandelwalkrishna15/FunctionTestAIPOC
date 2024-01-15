@@ -1,7 +1,7 @@
-Below is the URL of the application and I want to navigate to Add Employee page
-https://opensource-demo.orangehrmlive.com/web/index.php/pim/addEmployee
-Login details for the application are:
-Username : Admin
-Password : admin123
-Page is :PIM
-Enable Create login Details Toggle button. and Write scenarios for that.
+As a customer, I login to the testfire portal
+and home page is displayed after login 
+When user clicks on tranfer funds link
+Then
+- user should be navigated to transfer fund page -
+- user should be able to tranfer funds successfuly with different he/she selects different account in To and from field
+- system should throw an error when same account is selected in To and from field

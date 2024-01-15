@@ -1,77 +1,66 @@
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
+public class TransferFundsSteps {
 
-public class AddEmployeeSteps {
-    WebDriver driver;
-
-    @Given("I am on the login page")
-    public void i_am_on_the_login_page() {
-        System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
-        driver = new ChromeDriver();
-        driver.get("https://example.com/login");
+    @Given("^I am on the testfire login page$")
+    public void i_am_on_the_testfire_login_page() {
+        // code to navigate to the testfire login page
     }
 
-    @When("I enter {string} as the username")
-    public void i_enter_as_the_username(String username) {
-        WebElement usernameField = driver.findElement(By.id("username"));
-        usernameField.sendKeys(username);
+    @When("^I enter valid credentials and click on login$")
+    public void i_enter_valid_credentials_and_click_on_login() {
+        // code to enter valid credentials and click on login
     }
 
-    @When("I enter {string} as the password")
-    public void i_enter_as_the_password(String password) {
-        WebElement passwordField = driver.findElement(By.id("password"));
-        passwordField.sendKeys(password);
+    @Then("^I should be on the home page$")
+    public void i_should_be_on_the_home_page() {
+        // code to verify if the user is on the home page
     }
 
-    @When("I click on the login button")
-    public void i_click_on_the_login_button() {
-        WebElement loginButton = driver.findElement(By.id("loginButton"));
-        loginButton.click();
+    @When("^I click on the transfer funds link$")
+    public void i_click_on_the_transfer_funds_link() {
+        // code to click on the transfer funds link
     }
 
-    @Then("I should be logged in successfully")
-    public void i_should_be_logged_in_successfully() {
-        // Verify that user is logged in successfully
+    @Then("^I should be on the transfer funds page$")
+    public void i_should_be_on_the_transfer_funds_page() {
+        // code to verify if the user is on the transfer funds page
     }
 
-    @Given("I am logged in to the application")
-    public void i_am_logged_in_to_the_application() {
-        // Assume user is already logged in
+    @When("^I select a different account in the \"From\" field$")
+    public void i_select_a_different_account_in_the_from_field() {
+        // code to select a different account in the "From" field
     }
 
-    @When("I navigate to the PIM page")
-    public void i_navigate_to_the_pim_page() {
-        // Navigate to the PIM page
+    @When("^I select a different account in the \"To\" field$")
+    public void i_select_a_different_account_in_the_to_field() {
+        // code to select a different account in the "To" field
     }
 
-    @When("I click on the Add Employee button")
-    public void i_click_on_the_add_employee_button() {
-        // Click on the Add Employee button
+    @When("^I enter a valid amount to transfer$")
+    public void i_enter_a_valid_amount_to_transfer() {
+        // code to enter a valid amount to transfer
     }
 
-    @Then("I should be on the Add Employee page")
-    public void i_should_be_on_the_add_employee_page() {
-        // Verify that user is on the Add Employee page
+    @When("^I click on the transfer button$")
+    public void i_click_on_the_transfer_button() {
+        // code to click on the transfer button
     }
 
-    @Given("I am on the Add Employee page")
-    public void i_am_on_the_add_employee_page() {
-        // Assume user is already on the Add Employee page
+    @Then("^I should see a success message confirming the transfer$")
+    public void i_should_see_a_success_message_confirming_the_transfer() {
+        // code to verify if a success message confirming the transfer is displayed
     }
 
-    @When("I enable the Create Login Details toggle button")
-    public void i_enable_the_create_login_details_toggle_button() {
-        // Enable the Create Login Details toggle button
+    @When("^I select the same account in the \"From\" and \"To\" fields$")
+    public void i_select_the_same_account_in_the_from_and_to_fields() {
+        // code to select the same account in the "From" and "To" fields
     }
 
-    @Then("the toggle button should be enabled")
-    public void the_toggle_button_should_be_enabled() {
-        // Verify that the toggle button is enabled
+    @Then("^I should see an error message indicating that the same account cannot be selected for transfer$")
+    public void i_should_see_an_error_message_indicating_that_the_same_account_cannot_be_selected_for_transfer() {
+        // code to verify if an error message indicating that the same account cannot be selected for transfer is displayed
     }
 }

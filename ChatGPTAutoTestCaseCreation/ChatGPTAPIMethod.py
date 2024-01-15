@@ -1,12 +1,13 @@
 import openai
 
 # Set your API key here
-openai.api_key = "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"
+openai.api_key = "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"
+#openai.api_key = "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"
 
-# Define a conversation
+# Define a conversation with user and assistant messages
 conversation = [
-    {"role": "system", "content": "Who is PM of india"},
-
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "Who is the PM of India?"},
 ]
 
 # Generate a response
