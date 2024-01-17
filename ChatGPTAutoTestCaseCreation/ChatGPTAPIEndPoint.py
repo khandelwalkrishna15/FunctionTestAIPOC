@@ -1,10 +1,10 @@
 import time
-
 import openai
 import requests
 import os
 from wheel.metadata import generate_requirements
 import configparser
+import constant
 
 
 #Read API key From config file
@@ -12,25 +12,19 @@ config =configparser.RawConfigParser()
 print(config.sections())
 #_____________Reading config property files________________________
 
-#main_directory = os.path.join(os.getcwd(), 'FunctionalTestPOC')
-
 # Creating the path to the properties file
-#configFilePath = os.path.join(main_directory, 'TestData', 'config.properties')
+# Get the current working directory
+script_directory = os.path.dirname(os.path.abspath(__file__))
+parent_directory = os.path.dirname(script_directory)
+configFilePath = os.path.join(parent_directory, 'TestData', 'config.properties')
 
-# Now, you can use the 'properties_file_path' in your Python program to access the file
-#print(f"Path to Prompt.properties: {configFilePath}")
-configFilePath = r'C:\Users\krishnakhandelwal\FunctionalTestPOC\TestData\config.properties'
-# configFilePath = ../venv/TestData
-#
-# configFilePath = 'venv/TestData/config.properties'
-# properties_file_path = os.path.abspath(configFilePath)
 
 config.read(configFilePath)
 featurefile_folder_path = config.get('details','featurefile_folder_path')
 stepdef_folder_path = config.get('details','stepdef_folder_path_new')
 Requirement_File_path = config.get('details','Requirement_File_path')
 Generate_FeatureFile = config.get('details','Generate_FeatureFile')
-Generate_StepDefFile = config.get('details', 'Generate_FeatureFile')
+Generate_StepDefFile = config.get('details', 'Generate_StepDefFile')
 PathOfFeatureFile_generateStepdef = config.get('details','PathOfFeatureFile_generateStepdef')
 nameOf_featureFile = config.get('details','nameOf_featureFile')
 nameOf_StepDefFile = config.get('details','nameOf_StepDefFile')
@@ -43,16 +37,18 @@ prompt_applicationUserName = config.get('details','Username')
 prompt_applicationPassword = config.get('details','Password')
 
 #_____________Reading Prompt property files________________________
-PromptFilePath = r'C:\Users\krishnakhandelwal\FunctionalTestPOC\TestData\Prompt.properties'
+PromptFilePath = os.path.join(parent_directory, 'TestData', 'Prompt.properties')
+#PromptFilePath = r'C:\Users\krishnakhandelwal\FunctionalTestPOC\TestData\Prompt.properties'
 config.read(PromptFilePath)
-api_key=config.get('prompts','Openapi_key')
+#api_key=config.get('prompts','Openapi_key')
 prompt_feature1 = config.get('prompts','prompt_feature1')
 prompt_feature2 = config.get('prompts','prompt_feature2')
 prompt_stepImplementation = config.get('prompts','prompt_stepImplementation')
 promptForPOMGeneration = config.get('prompts','promptForPOMGeneration')
 
 # Set your API key
-openai.api_key = api_key
+#openai.api_key = api_key
+openai.api_key = constant.APIKEY
 prompt1_res_feature = " "
 # Define the endpoint URL
 endpoint_url = "https://api.openai.com/v1/chat/completions"  # Use the appropriate endpoint for your model
@@ -97,7 +93,7 @@ def get_prompt_from_requirementFileForPOM():
 def extract_APIResponse_ForFeatureFile():
     prompt = get_prompt_from_requirementFile()
     newPrompt=prompt_feature1 + os.linesep+prompt_applicationURL+ os.linesep+'UserName: '+prompt_applicationUserName+os.linesep+'Password: '+prompt_applicationPassword+ os.linesep+prompt + os.linesep+prompt_feature2
-    print(newPrompt)
+    #print(newPrompt)
     # Define the data (conversation and prompt)
     data = {
         "model":"gpt-3.5-turbo",
@@ -144,7 +140,7 @@ def extract_APIResponse_ForthePromptPOM():
     # Extract the assistant's reply
     assistant_reply= response.json()['choices'][0]['message']['content']
     # Use the assistant's reply
-    print("Constructed prompt" +assistant_reply)
+    #print("Constructed prompt" +assistant_reply)
     return assistant_reply
 def extract_APIResponse_ForthePrompt():
     # prompt = "Generate step implementation for the above feature file in java language Without any additional introductory text."
@@ -163,14 +159,15 @@ def extract_APIResponse_ForthePrompt():
     # Extract the assistant's reply
     assistant_reply = response.json()['choices'][0]['message']['content']
     # Use the assistant's reply
-    print(assistant_reply)
+    #print(assistant_reply)
     return assistant_reply
 
 def generate_OnlyStepDefFileForGiven_featurefile():
     # prompt = "Generate step implementation for the above feature file in java language Without any additional introductory text."
     # Define the data (conversation and prompt)
     with open(PathOfFeatureFile_generateStepdef, "r") as file:
-        featurefileData=file.read()
+       featurefileData=file.read()
+       #featurefileData = extract_APIResponse_ForFeatureFile()
     PromptSecond= prompt_stepImplementation + featurefileData;
     data = {
         "model":"gpt-3.5-turbo",
@@ -185,7 +182,7 @@ def generate_OnlyStepDefFileForGiven_featurefile():
     # Extract the assistant's reply
     assistant_reply = response.json()['choices'][0]['message']['content']
     # Use the assistant's reply
-    print(assistant_reply)
+   # print(assistant_reply)
     return assistant_reply
 
 
@@ -242,16 +239,18 @@ def generate_featurefile_from_api_response(api_response, class_name):
         java_file.write(api_response)
     time.sleep(10)
 
-if (Generate_FeatureFile.lower()=='yes' and Generate_StepDefFile.lower() == 'no' ):
-    generate_featurefile_from_api_response(extract_APIResponse_ForFeatureFile(),nameOf_featureFile)
-    print("generated only feature file")
-elif(Generate_FeatureFile.lower()=='no' and Generate_StepDefFile.lower()=='yes'):
-    generate_stepImplementationFile_For_FeatureFile(generate_OnlyStepDefFileForGiven_featurefile(),nameOf_StepDefFile)
-    print("generated only  step def file")
+if (Generate_FeatureFile.lower() == 'yes' and Generate_StepDefFile.lower() == 'no'):
+    generate_featurefile_from_api_response(extract_APIResponse_ForFeatureFile(), nameOf_featureFile)
+    # print("generated only feature file")
+elif (Generate_FeatureFile.lower() == 'yes' and Generate_StepDefFile.lower() == 'yes'):
+    generate_featurefile_from_api_response(extract_APIResponse_ForFeatureFile(), nameOf_featureFile)
+    generate_stepImplementationFile_For_FeatureFile(generate_OnlyStepDefFileForGiven_featurefile(), nameOf_StepDefFile)
+    # print("generated both feature and step def files")
+elif (Generate_FeatureFile.lower() == 'no' and Generate_StepDefFile.lower() == 'no'):
+    print("no file is selected to generate")
 else:
-    generate_featurefile_from_api_response(extract_APIResponse_ForFeatureFile(),nameOf_featureFile)
-    generate_stepImplementationFile_For_FeatureFile(generate_OnlyStepDefFileForGiven_featurefile(),nameOf_StepDefFile)
-    print("generated only  step def file")
+    print("Invalid combination of generation preferences")
+
 
 
 if (Generate_PageObject.lower()=='yes'):

@@ -1,7 +1,8 @@
 import openai
 
 # Set your API key here
-openai.api_key = "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"
+openai.api_key = "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"
+#openai.api_key = "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"
 #openai.api_key = "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"
 
 # Define a conversation with user and assistant messages
