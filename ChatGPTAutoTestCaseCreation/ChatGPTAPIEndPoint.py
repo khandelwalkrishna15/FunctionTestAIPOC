@@ -38,7 +38,6 @@ prompt_applicationPassword = config.get('details','Password')
 
 #_____________Reading Prompt property files________________________
 PromptFilePath = os.path.join(parent_directory, 'TestData', 'Prompt.properties')
-#PromptFilePath = r'C:\Users\krishnakhandelwal\FunctionalTestPOC\TestData\Prompt.properties'
 config.read(PromptFilePath)
 #api_key=config.get('prompts','Openapi_key')
 prompt_feature1 = config.get('prompts','prompt_feature1')
